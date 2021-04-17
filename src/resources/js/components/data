@@ -1,0 +1,75 @@
+  // created () {
+  //   window.addEventListener("beforeunload", this.confirmSave)
+  // },
+  destroyed () {
+    window.removeEventListener("beforeunload", this.confirmSave);
+  },
+  beforeRouteLeave (to, from, next) {
+    if (typeof this.event_logs === 'undefined') {
+      this.deleteLog()
+
+      next()
+    } else {
+      next()
+    }
+    // if (isset(this.event_logs) && !isset(this.logContent)) {
+    //   const answer = window.confirm("編集中のトレログの一言が未入力のまま保存されますがよろしいですか？")
+    //   if (answer) {
+    //     next()
+    //   } else {
+    //     next(false)
+    //   } 
+    // } else {
+    //   this.deleteLog()
+
+    //   next()
+    // }
+  },
+}
+
+
+watch: {
+    $route: {
+      handler () {
+        if (window.name != "any") {
+          location.reload();
+          window.name = "any";
+        } else {
+          window.name = "";
+        }
+      },
+      immediate: true
+    }
+  }
+
+  reset () {
+      this.$router.go({path: this.$router.currentRoute.path, force: true})
+    }
+
+
+
+
+    <infinite-loading @infinite="infiniteHandler"></infinite-loading>
+
+    infiniteHandler($state) {
+      axios.get('/api/logs', {
+        params: {
+          page: this.page,
+          per_page: 1
+        },
+      }).then(({ data }) => {
+        console.log(data)
+        //そのままだと読み込み時にカクつくので1500毎に読み込む
+        setTimeout(() => {
+          if (this.page < data.data.length) {
+            this.page += 1
+            this.logs.push(...data.data)
+            $state.loaded()
+          } else {
+            $state.complete()
+          }
+        }, 1500)
+      }).catch((err) => {
+        $state.complete()
+      })
+    },
