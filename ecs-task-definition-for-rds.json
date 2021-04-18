@@ -1,24 +1,36 @@
 {
   "executionRoleArn": "arn:aws:iam::783628136411:role/ECSTaskRole",
-  "containerDefinitions": [{
-    "name": "rds",
-    "image": "783628136411.dkr.ecr.ap-northeast-1.amazonaws.com/ecs-hands-on/rds:latest",
-    "essential": true,
-    "secrets": [
-      {
-        "name": "ENDPOINT",
-        "valueFrom": "arn:aws:ssm:ap-northeast-1:783628136411:parameter/ENDPOINT" 
-      },
-      {
-        "name": "USER",
-        "valueFrom": "arn:aws:ssm:ap-northeast-1:783628136411:parameter/USER" 
-      },
-      {
-        "name": "PASS",
-        "valueFrom": "arn:aws:ssm:ap-northeast-1:783628136411:parameter/PASS" 
+  "containerDefinitions": [
+    {
+      "name": "rds",
+      "image": "783628136411.dkr.ecr.ap-northeast-1.amazonaws.com/ecs-hands-on/rds:latest",
+      "essential": true,
+      "secrets": [
+        {
+          "name": "ENDPOINT",
+          "valueFrom": "arn:aws:ssm:ap-northeast-1:783628136411:parameter/ENDPOINT" 
+        },
+        {
+          "name": "USER",
+          "valueFrom": "arn:aws:ssm:ap-northeast-1:783628136411:parameter/USER" 
+        },
+        {
+          "name": "PASS",
+          "valueFrom": "arn:aws:ssm:ap-northeast-1:783628136411:parameter/PASS" 
+        }
+      ],
+      "readonlyRootFilesystem": false,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "ecs-hands-on",
+            "awslogs-region": "ap-northeast-1", 
+            "awslogs-datetime-format": "%Y-%m-%d %H:%M:%S", 
+            "awslogs-stream-prefix": "laravel"
+        }
       }
-    ]
-  }],
+    }
+  ],
   "requiresCompatibilities": [
     "FARGATE"
   ],
